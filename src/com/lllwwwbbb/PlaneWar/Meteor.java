@@ -3,11 +3,12 @@ package com.lllwwwbbb.PlaneWar;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Point;
+import java.util.LinkedList;
 
 import javax.swing.ImageIcon;
 
 public class Meteor {
-	private final int WIDTH = 80, HEIGH = 100, SPE_L = 50, SPE_H = 100;
+	private final int WIDTH = 45, HEIGH = 45, SPE_L = 50, SPE_H = 100;
 	private double x, y, speed;
 	private static Image image = new ImageIcon("res/meteor.png").getImage();
 
@@ -25,6 +26,11 @@ public class Meteor {
 		y += speed / (1000.0 / Game.PERIOD);
 	}
 	
+	public boolean hit(double x, double y) {
+		return x > this.x && x < this.x + WIDTH &&
+				y > this.y && y < this.y + HEIGH;
+	}
+	
 	public boolean out() {
 		return y > Game.SCR_HEIGH;
 	}
@@ -38,8 +44,8 @@ public class Meteor {
 		return points;
 	}
 	
-	public void explode() {
-		
+	public void explode(LinkedList<Explode> explodes) {
+		explodes.add(new Explode(x + WIDTH / 2, y + HEIGH / 2));
 	}
 }
 

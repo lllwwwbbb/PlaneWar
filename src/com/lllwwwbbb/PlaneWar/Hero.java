@@ -63,8 +63,8 @@ public class Hero {
 		return false;
 	}
 	
-	public void explode() {
-		
+	public void explode(LinkedList<Explode> explodes) {
+		explodes.add(new Explode(x + WIDTH / 2, y + HEIGH / 2));
 	}
 	
 	public boolean live() {

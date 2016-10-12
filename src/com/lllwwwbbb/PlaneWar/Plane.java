@@ -79,8 +79,8 @@ public class Plane {
 				y > this.y + HEIGH / 4 && y < this.y + HEIGH;
 	}
 	
-	public void explode() {
-		
+	public void explode(LinkedList<Explode> explodes) {
+		explodes.add(new Explode(x + WIDTH / 2, y + HEIGH / 2));
 	}
 }
 

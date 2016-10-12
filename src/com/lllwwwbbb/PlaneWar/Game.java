@@ -29,6 +29,7 @@ public class Game extends JPanel{
 	private LinkedList<Plane> planes = new LinkedList<Plane>();
 	private LinkedList<Missile> missiles = new LinkedList<Missile>();
 	private LinkedList<Meteor> meteors = new LinkedList<Meteor>();
+	private LinkedList<Explode> explodes = new LinkedList<Explode>();
 	
 	public Game() {
 		Dimension scrDimension = new Dimension(SCR_WIDTH, SCR_HEIGH);
@@ -51,8 +52,8 @@ public class Game extends JPanel{
 						continue;
 					}
 					if (hero.collide(planes.get(i).getPoint())) {
-						planes.get(i).explode();
-						hero.explode();
+						planes.get(i).explode(explodes);
+						hero.explode(explodes);
 						planes.remove(i);
 						i --;
 						continue;
@@ -66,13 +67,14 @@ public class Game extends JPanel{
 						continue;
 					}
 					if (hero.collide(meteors.get(i).getPoint())) {
-						meteors.get(i).explode();
-						hero.explode();
+						meteors.get(i).explode(explodes);
+						hero.explode(explodes);
 						meteors.remove(i);
 						i --;
 						continue;
 					}
 				}
+				travel_missiles:
 				for (int i = 0; i < missiles.size(); i ++) {
 					Missile missile = missiles.get(i);
 					missile.move();
@@ -83,7 +85,7 @@ public class Game extends JPanel{
 					}
 					if (missile.isHero() == false) {
 						if (hero.hit(missile.getX(), missile.getY())) {
-							hero.explode();
+							hero.explode(explodes);
 							missiles.remove(i);
 							i --;
 						}
@@ -91,12 +93,27 @@ public class Game extends JPanel{
 					}
 					for (int j = 0; j < planes.size(); j ++) {
 						if (planes.get(j).hit(missile.getX(), missile.getY())) {
-							planes.get(j).explode();
+							planes.get(j).explode(explodes);
 							planes.remove(j);
 							missiles.remove(i);
 							i --;
-							break;
+							continue travel_missiles;
 						}
+					}
+					for (int j = 0; j < meteors.size(); j ++) {
+						if (meteors.get(j).hit(missile.getX(), missile.getY())) {
+							missiles.remove(i);
+							i --;
+							continue travel_missiles;
+						}
+					}
+				}
+				for (int i = 0; i < explodes.size(); i ++) {
+					explodes.get(i).move();
+					if (explodes.get(i).out()) {
+						explodes.remove(i);
+						i --;
+						continue;
 					}
 				}
 				tick += PERIOD;
@@ -150,6 +167,8 @@ public class Game extends JPanel{
 		for (int i = 0; i < planes.size(); i ++) { planes.get(i).draw(g2d); }
 		for (int i = 0; i < missiles.size(); i ++) { missiles.get(i).draw(g2d); }
 		for (int i = 0; i < meteors.size(); i ++) { meteors.get(i).draw(g2d); }
+		for (int i = 0; i < explodes.size(); i ++) { explodes.get(i).draw(g2d); }
+		
 		g2d.setFont(new Font("宋体", Font.BOLD, 23));
 		g2d.setColor(Color.CYAN);
 		g2d.drawString("life: " + hero.getLife(), 0, 20);
